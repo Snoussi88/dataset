@@ -27,7 +27,7 @@ def translate(sentence):
     eng = dict()
     verbs = dict()
     for item in allforone: 
-        with open(item+".csv") as corpus:
+        with open("./files/"+item+".csv") as corpus:
             reader = csv.reader(corpus,delimiter=',')
             for row in reader:
                 for word in row:
@@ -36,7 +36,7 @@ def translate(sentence):
                             eng[token] = [tokens.index(token),row[-1],item]
                         
     for item in conjug:
-        with open(item+".csv") as tense:
+        with open("./files/"+item+".csv") as tense:
             reader = csv.reader(tense,delimiter=',')
             for row in reader:
                 for word in row:
@@ -60,13 +60,13 @@ def translate(sentence):
                 pronoun = eng[item][-1]
                 
                 verb = eng[item][1]
-                with open('pronouns.csv') as eng_pronouns:
+                with open("./files/"+'pronouns.csv') as eng_pronouns:
                     reader4 = csv.reader(eng_pronouns,delimiter=',')
                     for row4 in reader4:
                         for word4 in row4:
                             if word4 == pronoun:
                                 result.append(row4[-1])
-                with open('verbs.csv') as verbs_list:
+                with open("./files/"+'verbs.csv') as verbs_list:
                     reader3 = csv.reader(verbs_list,delimiter=',')
                     for row3 in reader3:
                         for word3 in row3:
@@ -83,7 +83,7 @@ def translate(sentence):
 
 
 
-result = translate("safrto lbareh l talyan")
+result = translate("mchaw lbareh l dzair")
 print(result)
 
 

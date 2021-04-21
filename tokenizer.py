@@ -79,13 +79,14 @@ def translate(sentence):
         final = final+" "+item
     return final
 
+#from pegasus import get_response
 
 
 
-
-result = translate("mchaw lbareh l dzair")
+result = translate("klina")
 print(result)
 
+'''print(get_response(result,10,10))'''
 
 
 

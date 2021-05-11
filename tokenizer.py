@@ -1,4 +1,7 @@
-import csv 
+import csv
+from difflib import SequenceMatcher
+from arabletters import transliterate_word
+#from pegasus import get_response
 
 
 ##conctenate most of the csv files into one big csv file###
@@ -14,7 +17,7 @@ conjug = ['conjug_past','conjug_present']
 pronouns = ["ana","nta","nti","howa","hia","7na","ntoma","homa"]
 def concatenate(files):
     with open("corpus.csv",'a') as corpus:
-        for filename in files:
+        for filename in files:  
             with open(filename+".csv") as file:
                 data = file.read()
                 corpus.write(data)
@@ -77,16 +80,117 @@ def translate(sentence):
     final = ""
     for item in result:
         final = final+" "+item
+    print(result)
     return final
 
-#from pegasus import get_response
 
 
 
-result = translate("klina")
-print(result)
+
+#sequence =transliterate_word("mchina lbareh")
+
+#result = translate(sequence)
+#print(result)
 
 '''print(get_response(result,10,10))'''
+
+
+def map_word(word):
+    ## word is in arabic letters ## ==> ##return the word in latin letters.
+    with open('map.csv',encoding='utf-8') as MAP:
+        MAP_reader = csv.reader(MAP)
+        for row in MAP_reader:
+            if len(row)<1:
+                pass
+            else:
+                if word in row[-1]:
+                    print("word found")
+                    return row[0] ##change this line later for more precision.
+                else:
+                    pass
+
+def search_word(word):
+    ratios = dict()
+    with open('map.csv',encoding='utf-8') as MAP:
+        MAP_reader = csv.reader(MAP)
+        for row in MAP_reader:
+            if len(row)<1:
+                pass
+            else:
+                s = SequenceMatcher(None,row[-1],word)
+                ratio = s.ratio()
+                if ratio >= 0.6:
+                    ratios[row[-1]]=ratio
+    
+    a = {k: v for k, v in sorted(ratios.items(), key=lambda item: item[1])}
+
+    b = list(a)
+    return(b[-1])
+
+
+#word = search_word("مطيشة")
+#trans_word = map_word(word)
+#print(trans_word)
+
+def search_verb(verb):
+    ratios = dict()
+    with open('map_conjug_past.csv',encoding='utf-8') as MAP_PAST:
+        past_reader = csv.reader(MAP_PAST)
+        for row in past_reader:
+            if len(row)<1:
+                pass
+            else:
+                for word in row:
+
+                    s = SequenceMatcher(None,verb,word)
+                    ratio = s.ratio()
+                    if ratio >= 0.7:
+                        ratios[word] = ratio
+    a = {k: v for k, v in sorted(ratios.items(), key=lambda item: item[1])}
+
+    b = list(a)
+    return (ratios)
+
+
+
+
+
+
+def search_line(word):
+    line = None
+    pos = None
+    trans = None
+    with open('map_conjug_past.csv',encoding='utf-8') as MAP_PAST, open('./files/conjug_past.csv',encoding='utf-8') as PAST:
+        past_reader = csv.reader(MAP_PAST)
+        past = csv.reader(PAST)
+        for row in past_reader:
+            if len(row)<1:
+                pass
+            else:
+                for column in row:
+                    if column == word:
+                        line = past_reader.line_num
+                        pos = row.index(word)
+        for row in past:
+            if past.line_num == line:
+                trans = row[pos]
+                break
+    return trans
+
+
+row = search_line("كلينا")
+print(row)
+    
+
+
+        
+
+                         
+
+
+
+
+
 
 
 

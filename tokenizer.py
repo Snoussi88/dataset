@@ -1,35 +1,24 @@
 import csv
 from difflib import SequenceMatcher
-from arabletters import transliterate_word
+from preprocess import transliterate_word
 #from pegasus import get_response
 
 
-##conctenate most of the csv files into one big csv file###
-allforone = ['adjectives','adverbs','animals',
+files = ['adjectives','adverbs','animals',
 'art','clothes','colors','plants','possessives',
 'prepositions','pronouns','professions','religion',
 'weird','economy','education','technology','family',
-'places','time','verbs','food']
-###
+'time','food','politics','weird','places']
 
+pronouns = ["ana","nta","nti","howa","hia","7na","ntoma","homa"]
 
 conjug = ['conjug_past','conjug_present']
-pronouns = ["ana","nta","nti","howa","hia","7na","ntoma","homa"]
-def concatenate(files):
-    with open("corpus.csv",'a') as corpus:
-        for filename in files:  
-            with open(filename+".csv") as file:
-                data = file.read()
-                corpus.write(data)
-
-
-
 
 def translate(sentence):
     tokens = sentence.rsplit(" ")
     eng = dict()
     verbs = dict()
-    for item in allforone: 
+    for item in files: 
         with open("./files/"+item+".csv") as corpus:
             reader = csv.reader(corpus,delimiter=',')
             for row in reader:
@@ -144,12 +133,16 @@ def search_verb(verb):
 
                     s = SequenceMatcher(None,verb,word)
                     ratio = s.ratio()
-                    if ratio >= 0.7:
+                    if ratio >= 0.9:
                         ratios[word] = ratio
     a = {k: v for k, v in sorted(ratios.items(), key=lambda item: item[1])}
 
     b = list(a)
-    return (ratios)
+    if len(b)>=1:
+
+        return b[-1]
+    else:
+        return None
 
 
 
@@ -173,19 +166,79 @@ def search_line(word):
                         pos = row.index(word)
         for row in past:
             if past.line_num == line:
-                trans = row[pos]
+                trans = row[3]
                 break
     return trans
 
 
-row = search_line("كلينا")
-print(row)
+#row = search_line("كلينا") ===> ('kla','7na')
+#print(row)
     
 
+def search_line_word(token:str) -> str:
+    ratios = dict()
+    with open('map.csv',encoding='utf-8') as MAP:
+        past_reader = csv.reader(MAP)
+        for row in past_reader:
+            if len(row)<1:
+                pass
+            else:
 
-        
+                s = SequenceMatcher(None,token,row[-1])
+                ratio = s.ratio()
+                if ratio >= 0.9:
+                    ratios[row[0]] = ratio
+    a = {k: v for k, v in sorted(ratios.items(), key=lambda item: item[1])}
 
-                         
+    b = list(a)
+    return (b[-1])
+
+                       
+
+def translate2(sequence: str, data:dict):
+    word_trans=[]
+    words = []
+    verbs = [] 
+    tokens = sequence.split(" ")
+    
+    for token in tokens:
+        verb = search_line(search_verb(token))
+       
+        word = search_line_word(search_word(token))
+        words.append(word)
+        verbs.append(verb)
+    
+    for word in words:
+        word_trans.append(data[word])
+
+                    
+                    
+                
+    print(verbs)
+    print(words)
+    print(word_trans)
+
+
+
+
+def corpus_dict() -> dict:
+    dictionnary = dict()
+    with open('corpus.csv') as CORPUS:
+        reader = csv.reader(CORPUS)
+        for row in reader:
+            dictionnary[row[0]] = row[-1]
+        return dictionnary
+
+
+
+
+data = corpus_dict()
+
+translate2("باش نمشي",data)
+
+
+
+
 
 
 

@@ -11,14 +11,14 @@ files = ['adjectives','adverbs','animals',
 'art','clothes','colors','plants','possessives',
 'prepositions','pronouns','professions','religion',
 'weird','economy','education','technology','family',
-'places','time','verbs','food',"politics","weird","places",]
+'time','food','politics','weird','places']
 
 def concatenate():
     with open("corpus.csv",'a') as corpus:
         for filename in files:
             with open("./files/"+filename+".csv") as file:
                 data = file.read()
-                corpus.write(data)
+                corpus.write(data+","+filename)
 
 
 
@@ -70,7 +70,7 @@ def  transliterate_word(word):
 
 def generate_map():
     with open('map.csv','a',encoding='utf-8') as MAP:
-        WRITER = csv.writer(MAP)
+        WRITER = csv.writer(MAP,lineterminator='\n')
         with open('corpus.csv',encoding='utf-8') as CORPUS:
             READER = csv.reader(CORPUS)
             for row in READER:
@@ -95,18 +95,3 @@ def generate_map_conjug():
                     print("exception")
             WRITER.writerow(temp)
 
-
-#generate_map_conjug()
-            
-
-
-                
-
-
-
-
-
-
-
-
-        

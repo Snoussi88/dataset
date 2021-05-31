@@ -88,6 +88,7 @@ def generate_map_conjug():
         READER = csv.reader(PAST)
         for row in READER:
             temp =[]
+            temp.append(row[3])
             for word in row:
                 try:
                     temp.append(transliterate_word(word))
@@ -95,3 +96,4 @@ def generate_map_conjug():
                     print("exception")
             WRITER.writerow(temp)
 
+generate_map_conjug()
